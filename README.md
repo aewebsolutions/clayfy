@@ -207,7 +207,7 @@ Name | Type | Default | Description
 **moveX** | boolean | true | Element can be moved horizontally
 **move** | boolean | true | Element can be moved
 **not** | string | void | CSS Selector of childs to exclude. When user click on them, draggable element cannot be moved.
-**ghost** | mix | false | Element is not dragged itself but an image ghost. Set true or fill with markup.
+**ghost** | mix | false | Element is not dragged itself but an image ghost. Set true or fill with markup. Also, a function that returns markup
 **coverScreen** | boolean | true | Cover screen with layer for easily drag all over the screen (also, over iframes)
 **scrollable** | mix | void | CSS Selector or JQuery instance. By default, conainer is scrollable. Turn false to not scroll
 **droppable** | string | void | CSS Selector or JQuery instance where is allowed to drop
