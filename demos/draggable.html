@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Clayfy: Demos draggable</title>
+        <meta name="description" content="Clayfy JQuery plugin. Make elements draggable with less effort.">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../libs/jquery.js"></script>
+        <script src="../dist/clayfy.js"></script>
+        <link rel="stylesheet" href="../dist/clayfy.css" type="text/css">
+        <style>
+            h3{
+                margin: 30px 0 0 0;
+            }
+            p{
+                margin: 0
+            }
+            pre{
+                margin: 0;
+                color : #555;
+            }
+            .rect {
+                height: 100px;
+                width : 150px;
+                background : #ccc;
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                z-index: 1000;
+            }
+            .container{
+                margin-bottom: 20px;
+                height: 110px;
+                max-width: 500px;
+                position: relative;
+            }
+            .scrollable{
+                overflow: auto;
+                width: 200px;
+                height: 200px;
+                display: inline-block;
+                margin-right: 50px;
+                border: 2px solid #bbb
+            }
+            .droppable{
+                height: 200px;
+                width: 200px;
+                border : 2px solid transparent;
+                background: #d0e9e1;
+                display: inline-block;
+                margin-right : 50px;
+            }
+            
+            #container-2{
+                border: 2px solid #bbb;
+                height: 200px;
+            }
+            #container-4{
+                border: 2px solid #bbb;
+                height: 200px;
+            }
+            #container-5{
+                border: 2px solid #bbb;
+                height: 200px;
+                overflow: auto;
+            }
+            #container-8{
+                border: 2px solid #bbb;
+                height: 200px;
+            }
+            #droppable-10.clayfy-dragenter{
+                border-color : #38c429;
+            }
+            #droppable-10.clayfy-dropinside-demo-10{
+               border-color : #5a6de3;
+            }
+            #droppable-10.clayfy-dropinside-demo-11{
+               border-color : #990000;
+            }
+            #demo-10.clayfy-dragenter{
+               background : #38c429;
+            }
+            #demo-10.clayfy-dropinside{
+               background : #5a6de3;
+            }
+            .scrollable-inner{
+                height: 1500px;
+                width: 1500px;
+                background: rgba(237,251,255,1);
+                background: -moz-linear-gradient(top, rgba(237,251,255,1) 0%, rgba(0,78,99,1) 100%);
+                background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(237,251,255,1)), color-stop(100%, rgba(0,78,99,1)));
+                background: -webkit-linear-gradient(top, rgba(237,251,255,1) 0%, rgba(0,78,99,1) 100%);
+                background: -o-linear-gradient(top, rgba(237,251,255,1) 0%, rgba(0,78,99,1) 100%);
+                background: -ms-linear-gradient(top, rgba(237,251,255,1) 0%, rgba(0,78,99,1) 100%);
+                background: linear-gradient(to bottom, rgba(237,251,255,1) 0%, rgba(0,78,99,1) 100%);
+            }
+            
+            #demo-4{
+                cursor: w-resize;
+            }
+            #demo-6{
+                z-index: 10000;
+            }
+            
+        </style>
+            
+    </head>
+    <body>
+        <h1>Demos draggable</h1>
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Basic</h3>
+            <p>Drag element all over  the screen. Press "esc" key for cancel movement when dragging.</p>
+<pre>
+<code>
+$('#demo-1').clayfy();
+</code>
+</pre>
+
+        
+        <div class="container">
+            <div id="demo-1" class="rect"></div>
+        </div>
+        <script>
+            $('#demo-1').clayfy();
+        </script>
+        </div>
+        <!--Demo ends-->
+        
+        
+        <div class="demo">
+            <h3>Container</h3>
+            <p>You can only drag element over container. Drag element could be or not to be a container's child</p>
+<pre>
+<code>
+$('#demo-2').clayfy({
+    container : '#container-2'
+});
+</code>
+</pre>
+
+        
+        <div class="container" id="container-2">
+            <div id="demo-2" class="rect"></div>
+        </div>
+        <script>
+            $('#demo-2').clayfy({
+                container : '#container-2'
+            });
+        </script>
+        <p>Also, you can define bounderies from drag element itself. Use array (top, right, bottom, left) to constrict element's movement.</p>
+        <p>Bounderies are defined from element's init position, width and height.</p>
+<pre>
+<code>
+$('#demo-3').clayfy({
+    container : [0, 300, 30, 5]
+});
+</code>
+</pre>
+        <div class="container">
+            <div id="demo-3" class="rect"></div>
+        </div>
+        <script>
+            $('#demo-3').clayfy({
+                container : [0,300,30,5],
+            });
+        </script>
+        </div>
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Constrict movement</h3>
+            <p>You can set constrict movement vertically, horizontally, or neither. Turn false properties moveX, moveY and move. Also, you can easily change cursor CSS property.</p>
+<pre>
+<code>
+&lt;style&gt;
+   #demo-4{
+       cursor : w-resize;
+   }
+&lt;/style&gt;
+
+&lt;script&gt;
+    $('#demo-4').clayfy({
+        moveY : false,
+        container : '#container-4'
+    });
+&lt;/script&gt;
+</code>
+</pre>
+
+        
+        <div class="container"  id="container-4">
+            <div id="demo-4" class="rect"></div>
+        </div>
+        <script>
+            $('#demo-4').clayfy({
+                moveY : false,
+                container : '#container-4'
+            });
+        </script>
+        </div>
+        <!--Demo ends-->
+        
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Scroll</h3>
+            <p>If container is overflowed, you can drag element close to bounderies for scroll container.</p>
+<pre>
+<code>
+$('#demo-5').clayfy({
+   container : '#container-5'
+});
+</code>
+</pre>
+            
+            <div class="container" id="container-5">
+                <div class="scrollable-inner"></div>
+                <div id="demo-5" class="rect"></div>
+            </div>
+
+        <script>
+            $('#demo-5').clayfy({
+                container : '#container-5',
+                
+            });
+        </script>
+        
+        
+        <p>Also, you can add extra scrollable HTML elements. So, when you drag element near scrollable borders, scrollable element will scroll</p>
+<pre>
+<code>
+$('#demo-6').clayfy({
+   scrollable : '.scrollable'
+});
+</code>
+</pre>
+        <div class="container">
+            <div id="demo-6" class="rect"></div>
+        </div>
+        <div class="container scrollable">
+            <div style="height: 1500px;"></div>
+        </div>
+        <div class="container scrollable">
+            <div class="scrollable-inner"></div>
+        </div>
+        <script>
+            $('#demo-6').clayfy({
+                scrollable : '.scrollable'
+            });
+        </script>
+        </div>
+        <!--Demo ends-->
+        
+        
+        
+
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Ghost</h3>
+            <p>Set Ghost from element. Or set your own markup. Or define a function and return a markup.</p>
+<pre>
+<code>
+$('#demo-7').clayfy({
+    ghost : true
+});
+</code>
+</pre>
+
+        
+        <div class="container">
+            <div id="demo-7" class="rect"></div>
+        </div>
+        <script>
+            $('#demo-7').clayfy({
+                ghost : true
+            });
+        </script>
+        
+<pre>
+<code>
+$('#demo-8').clayfy({
+    ghost : '&lt;img src=&quot;...&quot&gt;', //triangle png image 
+    container : '#container-8'
+});
+</code>
+</pre>
+        <div class="container" id="container-8">
+            <div id="demo-8" class="rect"></div>
+        </div>
+        <script>
+            $('#demo-8').clayfy({
+                ghost : '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAABNmlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjarY6xSsNQFEDPi6LiUCsEcXB4kygotupgxqQtRRCs1SHJ1qShSmkSXl7VfoSjWwcXd7/AyVFwUPwC/0Bx6uAQIYODCJ7p3MPlcsGo2HWnYZRhEGvVbjrS9Xw5+8QMUwDQCbPUbrUOAOIkjvjB5ysC4HnTrjsN/sZ8mCoNTIDtbpSFICpA/0KnGsQYMIN+qkHcAaY6addAPAClXu4vQCnI/Q0oKdfzQXwAZs/1fDDmADPIfQUwdXSpAWpJOlJnvVMtq5ZlSbubBJE8HmU6GmRyPw4TlSaqo6MukP8HwGK+2G46cq1qWXvr/DOu58vc3o8QgFh6LFpBOFTn3yqMnd/n4sZ4GQ5vYXpStN0ruNmAheuirVahvAX34y/Axk/96FpPYgAAACBjSFJNAAB6JQAAgIMAAPn/AACA6AAAUggAARVYAAA6lwAAF2/XWh+QAAAA6klEQVR42tzPxxHCQBAEwOGS5gtpEZGyQC9VYWTOrJm5zqBv99fyhr5nmSEB4FFmSABAmSGhHPlKqEb+EoqR3YRa5DChFDlNqEQuEwqRqgR7pDrBHGlKsEaaE4yRrgRbpDvBFBlKsESGEwwRk0R2xCyRGTFNZEXMExkRl0R0xC0RGXFNREXcExGRkIR3JCzhGQlNeEXCEx6RlIR1JC1hGUlNWEXSExYRisRohCYxEqFK9EboEj0RykRrhDbREqFO1EboEzURicRVRCZxFpFKHEXkEnsRycRvRDbxGZFObBH5BACsAAAA//8DANr4NS4/KKxGAAAAAElFTkSuQmCC">',
+                container : '#container-8'
+            });
+        </script>
+        
+        
+<pre>
+<code>
+var count = 0;
+$('#demo-9').clayfy({
+    container : [10 , 200 , 30, 10],
+    ghost : function(){
+        count++;
+        return '&lt;b&gt;' + count + '&lt;/b&gt;'
+    }
+});
+</code>
+</pre>
+        <div class="container">
+            <div id="demo-9" class="rect"></div>
+        </div>
+        <script>
+            var count = 0;
+            $('#demo-9').clayfy({
+                 container : [10 , 200 , 30, 10],
+                ghost : function(){
+                    count++;
+                    return '<b style="font-size: 30px">'+count+'</b>'
+                }
+            });
+        </script>
+        
+        
+        </div>
+        <!--Demo ends-->
+        
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Droppable</h3>
+            <p>Define droppable elements. </p>
+<pre>
+<code>
+&lt;style&gt;
+    #droppable-10.clayfy-dragenter{
+        border-color : #38c429;
+    }
+    #droppable-10.clayfy-dropinside{
+        border-color : #5a6de3;
+    }
+    #demo-10.clayfy-dragenter{
+        background : #38c429;
+    }
+    #demo-10.clayfy-dropinside{
+        background : #5a6de3;
+    }
+&lt;/style&gt;
+
+&lt;script&gt;
+    $('#demo-10').clayfy({
+        droppable : '#droppable-10, #droppable-11'
+    });
+    $('#demo-11').clayfy({
+        fit : false,
+        droppable : '#droppable-10, #droppable-11',
+    });
+    $('#demo-12').clayfy({
+        dropoutside : true,
+        droppable : '#droppable-10, #droppable-11'
+    });
+    $('#demo-12').on({
+        'clayfy-dragenter' : function(e){
+            e.target.style.borderColor = '#039f8f';
+            this.style.backgroundColor = '#039f8f';
+        },
+        'clayfy-dragleave' : function(e){
+            e.target.style.borderColor = '';
+            this.style.backgroundColor = '#ccc';
+        },
+        'clayfy-dropinside' : function(e){
+            e.target.style.borderColor = '#ff700e';
+            this.style.backgroundColor = '#ff700e';
+        }
+    });
+&lt;/script&gt;
+</code>
+</pre>
+
+        
+        <div class="container">
+            <div id="demo-10" class="rect">#demo-10</div>
+            <div id="demo-11" class="rect" style="left : 200px">#demo-11</div>
+            <div id="demo-12" class="rect" style="left : 400px">#demo-12</div>
+        </div>
+        <div class="droppable" id="droppable-10"></div>
+        <div class="droppable" id="droppable-11"></div>
+        <script>
+            $('#demo-10').clayfy({
+                droppable : '#droppable-10, #droppable-11'
+            });
+            $('#demo-11').clayfy({
+                fit : false,
+                droppable : '#droppable-10, #droppable-11'
+            });
+            $('#demo-12').clayfy({
+                dropoutside : true,
+                droppable : '#droppable-10, #droppable-11'
+            });
+            $('#demo-12').on({
+                'clayfy-dragenter' : function(e){
+                    e.target.style.borderColor = '#039f8f';
+                    this.style.backgroundColor = '#039f8f';
+                },
+                'clayfy-dragleave' : function(e){
+                    e.target.style.borderColor = '';
+                    this.style.backgroundColor =  '#ccc';
+                },
+                'clayfy-dropinside' : function(e){
+                    e.target.style.borderColor = '#ff700e';
+                    this.style.backgroundColor =  '#ff700e';
+                }
+            });
+        </script>
+        </div>
+        <!--Demo ends-->
+        
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Migrate.</h3>
+            <p>Parent's drag element can change after drop it inside drop area.</p>
+<pre>
+<code>
+$('#demo-13').clayfy({
+    droppable : '#droppable-13',
+    scrollable : '#droppable-13',
+    migrate : true
+});
+</code>
+</pre>
+
+        
+        <div class="container">
+            <div id="demo-13" class="rect"></div>
+        </div>
+            <div class="droppable scrollable" id="droppable-13">
+                <div style="height: 1500px;"></div>
+            </div>
+        <script>
+            $('#demo-13').clayfy({
+                droppable : '#droppable-13',
+                scrollable : '#droppable-13',
+                migrate : true
+            });
+        </script>
+        
+        <p>As you can see, draggable element was moved inside droppable as its child. But now draggable element can not go outside drop area. You can set 'visible' overflow CSS property, but that will remove scrollbars. So, you can turn true 'overflow' propery in options. When you are dragging, element will be temporaly migrated to a helper container outside its parent.</p>
+        <p>Overflow property is false by default because element's inherit properties could be compromised.</p>
+        <pre>
+<code>
+$('#demo-14').clayfy({
+    droppable : '#droppable-14',
+    scrollable : '#droppable-14',
+    migrate : true,
+    overflow : true,
+});
+</code>
+</pre>
+
+        
+        <div class="container">
+            <div id="demo-14" class="rect"></div>
+        </div>
+            <div class="droppable scrollable" id="droppable-14">
+                <div style="height: 1500px;"></div>
+            </div>
+        <script>
+            $('#demo-14').clayfy({
+                droppable : '#droppable-14',
+                scrollable : '#droppable-14',
+                migrate : true,
+                overflow : true,
+                //dropoutside : true,
+                //ghost : true,
+                //ghost : '<div style="height:20px; width:20px; background: #555;"></div>'
+            });
+        </script>
+        
+        
+        </div>
+        <!--Demo ends-->
+        
+    </body>
+</html>

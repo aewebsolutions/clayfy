@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Clayfy: Demos sortable</title>
+        <meta name="description" content="Clayfy JQuery plugin. Make elements resizable with less effort.">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../libs/jquery.js"></script>
+        <script src="../dist/clayfy.js"></script>
+        <link rel="stylesheet" href="../dist/clayfy.css" type="text/css">
+        <style>
+            h3{
+                margin: 30px 0 0 0;
+            }
+            p{
+                margin: 0
+            }
+            pre{
+                margin: 0;
+                color : #555;
+            }
+            .rect {
+                height: 100px;
+                width : 150px;
+                background : #ccc;
+                top: 10px;
+                left: 10px;
+                margin-bottom: 20px;
+                z-index: 1000;
+            }
+
+            .container{
+                margin-bottom: 20px;
+                width : 160px;
+                min-height: 100px;
+                padding : 10px;
+                position: relative;
+                display: inline-block;
+                vertical-align: top;
+                border : 4px solid #bbb;
+            }
+            .demo-3{background: rgb(49, 181, 0); padding: 20px; box-sizing: border-box}
+            .demo-4{background: red; height:150px}
+            
+            .demo-5,
+            .demo-5.clayfy-box{
+                background: rgb(49, 181, 0);
+                cursor: s-resize
+            }
+            #container-5 .clayfy-sort-droparea{
+                border: 4px dashed red
+            }
+  
+            
+        </style>
+            
+    </head>
+    <body>
+        <h1>Demos sortable</h1>
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Basic</h3>
+            <p>Each '.demo-1' can change place with each sibling that has the same CSS selector, only under the same parent.  Press "esc" key for cancel.</p>
+<pre>
+<code>
+&lt;div&gt;
+    &lt;div class="demo-1"&gt;A.1&lt;/div&gt;
+    &lt;div class="demo-1"&gt;A.2&lt;/div&gt;
+    &lt;div class="demo-1"&gt;A.3&lt;/div&gt;
+&lt;/div&gt;
+&lt;div&gt;
+    &lt;div class="demo-1"&gt;B.1&lt;/div&gt;
+    &lt;div class="demo-1"&gt;B.2&lt;/div&gt;
+    &lt;div class="demo-1"&gt;B.3&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    $('.demo-1').clayfy({
+        type : 'sortable'
+    });
+&lt;/script&gt;
+</code>
+</pre>
+
+        <div class="container">
+            <div class="demo-1 rect">A.1</div>
+            <div class="demo-1 rect">A.2</div>
+            <div class="demo-1 rect">A.3</div>
+        </div>
+        <div class="container">
+            <div class="demo-1 rect">B.1</div>
+            <div class="demo-1 rect">B.2</div>
+            <div class="demo-1 rect">B.3</div>
+        </div> 
+            
+        <script>
+            $('.demo-1').clayfy({
+                type : 'sortable',
+            });
+        </script>
+        </div>
+        <!--Demo ends-->
+        
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Siblings and export </h3>
+            <p>You can set siblings selector. Now, elements can change place with each element that matches '.demo-2' CSS selector. As you see, CSS selector in 'siblings' property does not constrict matching under same parent.</p>
+<pre>
+<code>
+$('.demo-2').clayfy({
+    type : 'sortable',
+    siblings : '.demo-2'
+});
+</code>
+</pre>
+
+        
+        <div class="container">
+            <div class="demo-2 rect">A.1</div>
+            <div class="demo-2 rect">A.2</div>
+            <div class="demo-2 rect">A.3</div>
+        </div>
+        <div class="container">
+            <div class="demo-2 rect">B.1</div>
+            <div class="demo-2 rect">B.2</div>
+            <div class="demo-2 rect">B.3</div>
+        </div> 
+        <script>
+            $('.demo-2').clayfy({
+                type : 'sortable',
+                siblings : '.demo-2'
+            });
+        </script>
+        </div>
+        <!--Demo ends-->
+        
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>More about Siblings and exporting</h3>
+            <p></p>
+<pre>
+<code>
+$('.demo-3').clayfy({
+    type : 'sortable',
+    siblings : '.demo-4, .demo-3'
+});
+$('.demo-4').clayfy({
+    type : 'sortable',
+    siblings : '.demo-4, .demo-3', 
+    export : false
+});
+
+$('.demo-31').clayfy({
+    type : 'sortable',
+    siblings : '.demo-41, .demo-31'
+});
+$('.demo-41').clayfy({
+    type : 'sortable',
+    siblings : '.demo-4, .demo-3',
+    export : false
+});
+</code>
+</pre>
+
+        
+        <div class="container">
+            <div class="demo-3 rect">A.1 (.demo-3)</div>
+            <div class="demo-3 rect">A.2 (.demo-3)</div>
+        </div>
+        <div class="container">
+            <div class="demo-4 rect">B.1 (.demo-4)</div>
+            <div class="demo-4 rect">B.2 (.demo-4)</div>
+        </div> 
+        <script>
+            $('.demo-3').clayfy({type : 'sortable',siblings : '.demo-4, .demo-3'});
+            $('.demo-4').clayfy({type : 'sortable',siblings : '.demo-4, .demo-3', export : false});
+        </script>
+        
+        <div class="container" id="container-31">
+            <div class="demo-31 rect">C.1 (.demo-31)</div>
+            <div class="demo-31 rect">C.2 (.demo-31)</div>
+        </div>
+        <div class="container" id="container-32">
+            <div class="demo-41 rect">D.1 (.demo-41)</div>
+            <div class="demo-41 rect">D.2 (.demo-41)</div>
+        </div> 
+        <script>
+            $('.demo-31').clayfy({type : 'sortable',siblings : '.demo-41, .demo-31'});
+            $('.demo-41').clayfy({type : 'sortable',siblings : '.demo-4, .demo-3', export : false});
+        </script>
+        </div>
+        <!--Demo ends--> 
+        
+        
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Styling and events</h3>
+            <p>All styles and events from draggable are inherit by droppable. Use class "clayfy-box" for style element when is being moved, and "clayfy-sort-droparea" to style droparea when element is inside it.
+                <br>
+                Otherside, see the power of "clayfy-changeorder" event.
+            </p>
+<pre>
+<code>
+&lt;style&gt;
+    .demo-5,
+    .demo-5.clayfy-box{
+        background: rgb(49, 181, 0);
+        cursor: s-resize
+    }
+    #container-5 .clayfy-sort-droparea{
+        border: 4px dashed red
+    }
+&lt;/style&gt;
+
+&lt;script&gt;
+    $('.demo-5').clayfy({
+        type : 'sortable',
+        moveX : false,
+        container : '#container-5'
+    });
+    $('.demo-5').on('clayfy-changeorder', function(e){
+        console.log('new index: ' + e.index)
+        console.log(e.order)
+    });
+&lt;/script&gt;
+</code>
+</pre>
+
+        
+        <div class="container" id="container-5">
+            <div class="demo-5 rect">1</div>
+            <div class="demo-5 rect">2</div>
+        </div>
+        <script>
+            $('.demo-5').clayfy({
+                type : 'sortable',
+                moveX : false,
+                container : '#container-5'
+            });
+            $('.demo-5').on('clayfy-changeorder', function(e){
+                console.log('new index: ' + e.index)
+                console.log(e.order)
+            });
+        </script>
+        </div>
+        <!--Demo ends--> 
+      
+        
+    </body>
+</html>

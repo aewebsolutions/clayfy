@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Clayfy: Demos resizable</title>
+        <meta name="description" content="Clayfy JQuery plugin. Make elements resizable with less effort.">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../libs/jquery.js"></script>
+        <script src="../dist/clayfy.js"></script>
+        <link rel="stylesheet" href="../dist/clayfy.css" type="text/css">
+        <style>
+            h3{
+                margin: 30px 0 0 0;
+            }
+            p{
+                margin: 0
+            }
+            pre{
+                margin: 0;
+                color : #555;
+            }
+            .rect {
+                height: 100px;
+                width : 150px;
+                background : #ccc;
+                position: absolute;
+                top: 10px;
+                left: 10px;
+
+            }
+            .container{
+                margin-bottom: 20px;
+                height: 110px;
+                max-width: 500px;
+                position: relative;
+            }
+            
+            .custom-handlers.clayfy-top:after,
+            .custom-handlers.clayfy-bottom:after,
+            .custom-handlers.clayfy-left:after,
+            .custom-handlers.clayfy-right:after
+            {
+                content: '';
+                position: absolute;
+                height: 2px;
+                top:0;left:0;
+                width:100%;
+                background: red;
+            }
+            .custom-handlers.clayfy-bottom:after{
+                top:auto; bottom: 0;
+            }
+            .custom-handlers.clayfy-left:after{
+                width:2px; height:100%;
+            }
+            .custom-handlers.clayfy-right:after{
+                width:2px; height:100%;
+                right: 0; left:auto;
+            }
+            .custom-handlers.right:after,
+            .custom-handlers.left:after
+            {
+                height: 100%;
+            }
+
+            
+            #demo-5{
+                border: 4px solid #38c429;
+                overflow:scroll
+            }
+            #demo-6{
+                padding: 10px;
+            }
+  
+            
+        </style>
+            
+    </head>
+    <body>
+        <h1>Demos resizable</h1>
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Basic</h3>
+            <p>Resize an element as you like. Set min size and max size. Press "esc" key for cancel resizing. Press "Shift" when resizing to preserve aspect ratio.</p>
+<pre>
+<code>
+$('#demo-1').clayfy({
+    type : 'resizable',
+    minSize : [30,50],
+    maxSize : [600,300]
+});
+</code>
+</pre>
+
+        
+        <div class="container">
+            <div id="demo-1" class="rect"></div>
+        </div>
+        <script>
+            $('#demo-1').clayfy({
+                type : 'resizable',
+                minSize : [30,50],
+                maxSize : [600,300],
+            });
+        </script>
+        </div>
+        <!--Demo ends-->
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Aspect Ratio and Events.</h3>
+            <p>Force to preserve aspect ratio. Also, you can bind some events, as 'clayfy-resize' (triggered when element is been resizing) and 'clayfy-cancel' (triggered when you press esc key)</p>
+<pre>
+<code>
+var $demo2 = $('#demo-2');
+var writeSize = function(){
+    $demo2.html( $demo2.width() + ' x '+ $demo2.height() )
+};
+
+$demo2.clayfy({
+    type : 'resizable',
+    minSize : [30,50],
+    maxSize : [600,300],
+    preserveAspectRatio : true
+});
+$demo2.on('clayfy-resize clayfy-cancel', writeSize);
+
+writeSize();
+</code>
+</pre>
+
+        
+        <div class="container">
+            <div id="demo-2" class="rect"></div>
+        </div>
+        <script>
+            var $demo2 = $('#demo-2');
+            var writeSize = function(){
+                $demo2.html( $demo2.width() + ' x '+ $demo2.height() )
+            };
+            
+            $demo2.clayfy({
+                type : 'resizable',
+                minSize : [30,50],
+                maxSize : [600,300],
+                preserveAspectRatio : true
+            });
+            $demo2.on('clayfy-resize clayfy-cancel', writeSize);
+            
+            writeSize();
+        </script>
+        </div>
+        <!--Demo ends-->
+
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Resize only by right border.</h3>
+            <p>Select on which border find resizing handlers. Also, you can set move false.</p>
+<pre>
+<code>
+$('#demo-3').clayfy({
+    type : 'resizable',
+    move: false,
+    top: false,
+    left: false,
+    bottom: false,
+    minSize : [30,50],
+    maxSize : [600,300],
+});
+</code>
+</pre>
+
+        
+        <div class="container">
+            <div id="demo-3" class="rect"></div>
+        </div>
+        <script>
+            $('#demo-3').clayfy({
+                type : 'resizable',
+                move: false,
+                top: false,
+                left: false,
+                bottom: false,
+                minSize : [30,50],
+                maxSize : [600,300],
+            });
+        </script>
+        </div>
+        <!--Demo ends-->
+        
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Container and Callbacks.</h3>
+            <p>Set a container. Also, instead of bind events, you can set callbacks.</p>
+<pre>
+<code>
+var $demo4 = $('#demo-4');
+$demo4.clayfy({
+    type : 'resizable',
+    container : '#container-4',
+    minSize : [100,100],
+    maxSize : [600,300],
+    callbacks : {
+        resize : function(){
+            $demo4.html( 'inner: ' + $demo4.width() + ' x '+ $demo4.height() +'<br>outer: ' + $demo4.outerWidth() + ' x '+ $demo4.outerHeight());
+        }
+    }
+});
+</code>
+</pre>
+
+        
+        <div class="container" id="container-4" style="height: 200px; border: 2px solid #444">
+            <div id="demo-4" class="rect" style="border: 4px solid #38c429"></div>
+        </div>
+        <script>
+            var $demo4 = $('#demo-4');
+            $demo4.clayfy({
+                type : 'resizable',
+                container : '#container-4',
+                minSize : [100,100],
+                maxSize : [600,300],
+                callbacks : {
+                    resize : function(){
+                        $demo4.html( 'inner: ' + $demo4.width() + ' x '+ $demo4.height() +'<br>outer: ' + $demo4.outerWidth() + ' x '+ $demo4.outerHeight());
+                    }
+                }
+            });
+        </script>
+        </div>
+        <!--Demo ends-->
+        
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Outer handlers.</h3>
+            <p>When you resize even with borders, padding, and scrollbars.</p>
+<pre>
+<code>
+&lt;style&gt;
+    #demo-5{
+        border: 4px solid #38c429;
+        overflow:scroll
+    }
+&lt;/style&gt;
+
+&lt;script&gt;
+    var $demo4 = $('#demo-4');
+    $demo4.clayfy({
+        type : 'resizable',
+        container : '#container-4',
+        minSize : [100,50],
+        maxSize : [200,120],
+        callbacks : {
+            resize : function(){
+                $demo4.html( 'inner: ' + $demo4.width() + ' x '+ $demo4.height() +'<br>outer: ' + $demo4.outerWidth() + ' x '+ $demo4.outerHeight());
+            }
+        }
+    });
+&lt;/script&gt;
+</code>
+</pre>
+
+        
+        <div class="container" id="container-5" style="height: 200px; border: 2px solid #444">
+            <div id="demo-5" class="rect"><div class="text" style="height: 20px"></div></div>
+        </div>
+        <script>
+            var $demo5 = $('#demo-5');
+            var text = $demo5.find('.text')
+            $demo5.clayfy({
+                type : 'resizable',
+                container : '#container-5',
+                minSize : [100,50],
+                maxSize : [200,120],
+                callbacks : {
+                    resize : function(){
+                        text.html( 'inner: ' + $demo5.width() + ' x '+ $demo5.height() +'<br>outer: ' + $demo5.outerWidth() + ' x '+ $demo5.outerHeight());
+                    }
+                }
+            });
+        </script>
+        </div>
+        <!--Demo ends-->
+        
+        
+        
+        <!--Demo start-->
+        <div class="demo">
+            <h3>Styling.</h3>
+            <p>Style as you like. We recommend you to use ::after and ::before pseudo classes. </p>
+<pre>
+<code>
+&lt;style&gt;
+    .custom-handlers.clayfy-top:after,
+    .custom-handlers.clayfy-bottom:after,
+    .custom-handlers.clayfy-left:after,
+    .custom-handlers.clayfy-right:after
+    {
+        content: '';
+        position: absolute;
+        height: 2px;
+        top:0;left:0;
+        width:100%;
+        background: red;
+    }
+    .custom-handlers.clayfy-bottom:after{
+        top:auto; bottom: 0;
+    }
+    .custom-handlers.clayfy-left:after{
+        width:2px; height:100%;
+    }
+    .custom-handlers.clayfy-right:after{
+        width:2px; height:100%;
+        right: 0; left:auto;
+    }
+    .custom-handlers.right:after,
+    .custom-handlers.left:after
+    {
+        height: 100%;
+    }
+&lt;/style&gt;
+
+&lt;script&gt;
+    var $demo6 = $('#demo-6');
+    $demo6.clayfy({
+        type : 'resizable',
+        container : '#container-6',
+        minSize : [100,50],
+        maxSize : [200,120],
+        className : 'custom-handlers',
+        callbacks : {
+            resize : function(){
+                $demo6.html( 'inner: ' + $demo6.width() + ' x '+ $demo6.height() +'<br>outer: ' + $demo6.outerWidth() + ' x '+ $demo6.outerHeight());
+            }
+        }
+    });
+    $demo6.on('clayfy-cancel', function(){
+        $demo6.html( 'inner: ' + $demo6.width() + ' x '+ $demo6.height() +'<br>outer: ' + $demo6.outerWidth() + ' x '+ $demo6.outerHeight());
+    });
+&lt;/script&gt;
+</code>
+</pre>
+
+        
+        <div class="container" id="container-6" style="height: 200px; border: 2px solid #444">
+            <div id="demo-6" class="rect"></div>
+        </div>
+        <script>
+            var $demo6 = $('#demo-6');
+            $demo6.clayfy({
+                type : 'resizable',
+                container : '#container-6',
+                minSize : [100,50],
+                maxSize : [200,120],
+                className : 'custom-handlers',
+                callbacks : {
+                    resize : function(){
+                        $demo6.html( 'inner: ' + $demo6.width() + ' x '+ $demo6.height() +'<br>outer: ' + $demo6.outerWidth() + ' x '+ $demo6.outerHeight());
+                    }
+                }
+            });
+            $demo6.on('clayfy-cancel', function(){
+                $demo6.html( 'inner: ' + $demo6.width() + ' x '+ $demo6.height() +'<br>outer: ' + $demo6.outerWidth() + ' x '+ $demo6.outerHeight());
+            })
+        </script>
+        </div>
+        <!--Demo ends-->
+        
+    </body>
+</html>

@@ -1,0 +1,59 @@
+$prefix : 'clayfy';
+
+.#{$prefix}-box{
+    &:not(.clayfy-not-move){
+        cursor : move;
+    }
+}
+.#{$prefix}-ghost{
+    z-index: 1000;
+}
+.#{$prefix}-ghost-opacity{
+    opacity : .5;
+}
+
+.#{$prefix}-handler{
+    //background : #000;
+    
+    &.#{$prefix}-top{
+        cursor: n-resize;
+        &.left{
+            cursor: nw-resize;
+            /*
+            &:before{
+                content: '';
+                position: absolute;
+                top:0; left:0;
+                height: 100%; width: 100%;
+                border-top: 1px solid #000;
+                border-left: 1px solid #000;
+            }
+            */
+        }
+        &.right{
+            cursor: ne-resize;
+        }
+    }
+    &.#{$prefix}-bottom{
+        cursor: n-resize;
+        &.left{
+            cursor: sw-resize;
+        }
+        &.right{
+            cursor: se-resize;
+        }
+    }
+    &.#{$prefix}-left{
+        cursor: w-resize;
+    }
+    &.#{$prefix}-right{
+        cursor: w-resize;
+    }
+
+}
+
+.#{$prefix}-sort-droparea{
+    border : 2px solid #ccc
+}
+
+
