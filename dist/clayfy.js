@@ -1,5 +1,7 @@
 /**
- * 
+ * Clayfy Jquery Plugin.
+ * Make an element draggable, resizable or sortable.
+ * Copyright : Ángel Espro, 2016
  * 
  */
 
@@ -995,7 +997,7 @@ function Draggable(el, options){
         self.settings.dragstart.call(self, e);
         self.el.trigger('clayfy-dragstart');
         
-        $('html, body').on('mousemove touchmove', mousemove)
+        $(document).on('mousemove touchmove', mousemove)
                 .on('mouseup touchend', mouseup);
     }
     
@@ -1034,7 +1036,7 @@ function Draggable(el, options){
             screenY: e.screenY
         });
         self.el.trigger(event)
-        $('html, body').off('mousemove touchmove', mousemove)
+        $(document).off('mousemove touchmove', mousemove)
                 .off('mouseup touchend', mouseup);
     }
     
