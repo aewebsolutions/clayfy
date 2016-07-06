@@ -1433,7 +1433,8 @@ function Resizable(el, options){
         
         self.el.on('clayfy-resizeend clayfy-drop', function(e){
             e.stopPropagation();
-            if (!self.el.is(':hover') && !self.touchableDevice) {
+            //A little tricky, but is the faster way to check hovering:
+            if (!self.el.parent().find(":hover").length && !self.touchableDevice) {
                 insideBox = false;
                 self.el.trigger('mouseout');
             }
