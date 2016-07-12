@@ -33,8 +33,8 @@ Include JQuery js and plugin’s css and js files in your HTML code.
 ```html
 
 <script src="/lib/jquery.js"></script> 
-<link rel="stylesheet" href="/dist/clayfy.css" type="text/css" /> 
-<script src="/dist/clayfy.js"></script> 
+<link rel="stylesheet" href="/dist/clayfy.min.css" type="text/css" /> 
+<script src="/dist/clayfy.min.js"></script> 
 
 ```
 
