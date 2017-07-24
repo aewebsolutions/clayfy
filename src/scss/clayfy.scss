@@ -56,4 +56,12 @@ $prefix : 'clayfy';
     border : 2px solid #ccc
 }
 
-
+.#{$prefix}-touch-device{
+    #{$prefix}handler-bottom-right{
+        display: none;
+        width: 18px;
+        height: 18px;
+        bottom: -5px;
+        right: -5px;
+    }
+}
