@@ -972,7 +972,7 @@ function Draggable(el, options){
     var mousedown = function (e) {
         if (notDraggable.is(e.target) || (self.el.has(e.target).length && !self.settings.propagate))
             return;
-        if(typeof e.which !== 'undefined' && e.which !== 1)
+        if(!isTouchDevice() && typeof e.which !== 'undefined' && e.which !== 1)
             return;
          
         e.preventDefault();
@@ -1209,11 +1209,6 @@ function Draggable(el, options){
             $.clayfy.dY = 0;
     };
     
-    this.isTouchable = function () {
-        return (('ontouchstart' in window) ||
-                (navigator.maxTouchPoints > 0) ||
-                (navigator.msMaxTouchPoints > 0));
-    };
     
     this.destroy  =  function(){
       //Complete!!
@@ -1363,7 +1358,7 @@ function Resizable(el, options){
     
     //Private Methods
     var init = function () {
-        self.touchableDevice = self.isTouchable();
+        self.touchableDevice = isTouchDevice();
         self.originalSize = self.getSize();
         self.actualSize = self.originalSize;
         self.newSize = self.getNewSize();
@@ -1409,6 +1404,7 @@ function Resizable(el, options){
             self.hideHandlers();
             elAndHandlers = elAndHandlers.add(handler.el);
         });
+
         elAndHandlers.on('mouseover', function(){
             if(timeout)
                 clearTimeout(timeout);
@@ -1426,7 +1422,7 @@ function Resizable(el, options){
                 self.el.trigger('mouseout');
             }
         });
-        
+
         if(self.touchableDevice){
             elAndHandlers.on('touchstart', function(){
                 if(timeout)
@@ -1452,6 +1448,9 @@ function Resizable(el, options){
         
         var posibles = ['top left', 'top right', 'bottom left', 'bottom right', 'left', 'right', 'top', 'bottom'];
         
+        // if is touchable, make only one spot on bottom right
+        if(self.touchableDevice)
+            posibles = ['bottom right'];
 
         if(self.el.css('position') === 'static')
             self.el.css('position', 'relative');
@@ -1549,7 +1548,7 @@ function Resizable(el, options){
         insideBox = false;
     };
     this.showHandlers = function(){
-        if(insideBox || self.status !== 'ready')
+        if(insideBox || (self.status !== 'ready' && !self.touchableDevice))
             return;
         $.each(self.handlers, function (i, handler) {
             handler.el.css('display', 'block');
@@ -1578,18 +1577,12 @@ function Resizable(el, options){
         });
     };
     
-    this.isTouchable = function () {
-        return (('ontouchstart' in window) ||
-                (navigator.maxTouchPoints > 0) ||
-                (navigator.msMaxTouchPoints > 0));
-    };
-    
     //Auto init
     init();
  };
 
 function ResizableHandler(position, resizable){
-    this.el = $('<div>', {class : 'clayfy-handler clayfy-'+position, style : 'position: absolute;'});
+    this.el = $('<div>', {class : 'clayfy-handler clayfy-'+position, style : 'position: absolute'});
     this.resizable = resizable;
     this.position = position;
     this.draggable;
@@ -1695,12 +1688,15 @@ function ResizableHandler(position, resizable){
             resizable.el.trigger('clayfy-resize');
             resizable.settings.callbacks.resize();
         });
+        
+        //Touchable
+        if(self.resizable.touchableDevice)
+            self.el.addClass('clayfy-touch-device');
     };
 
     //Public Methods
     this.updatePosition = function () {
         var s = resizable.newSize;
-
         switch (self.position) {
             case 'left' :
                 self.el.css({width: 5, left: s.left, top: s.top, height: s.outerHeight});
@@ -1725,7 +1721,10 @@ function ResizableHandler(position, resizable){
                 self.el.css({width: 8, height: 8, left: s.left, top: s.bottom - 8});
                 break;
             case 'bottom right' :
-                self.el.css({width: 8, height: 8, left: s.right - 8, top: s.bottom - 8});
+                if(self.resizable.touchableDevice)
+                    self.el.css({width: 18, height: 18, left: s.right - 20, top: s.bottom - 20});
+                else
+                    self.el.css({width: 8, height: 8, left: s.right - 8, top: s.bottom - 8});
                 break;
 
         }
@@ -2160,3 +2159,15 @@ function Sortable(el , options){
     $.fn[pluginName].getters = ['getPosition'];
 
 })(jQuery);
+
+
+//Helpers:
+isTouchDevice = function () {
+    /*
+     return (('ontouchstart' in window) ||
+     (navigator.maxTouchPoints > 0) ||
+     (navigator.msMaxTouchPoints > 0));
+     */
+    return 'ontouchstart' in window        // works on most browsers 
+            || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+}
