@@ -37,4 +37,11 @@
 .clayfy-sort-droparea {
   border: 2px solid #ccc; }
 
+.clayfy-touch-device clayfyhandler-bottom-right {
+  display: none;
+  width: 18px;
+  height: 18px;
+  bottom: -5px;
+  right: -5px; }
+
 /*# sourceMappingURL=clayfy.css.map */
