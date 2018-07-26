@@ -1465,6 +1465,9 @@ function Resizable(el, options){
         };
         draggableOptions = $.extend(true, {}, self.settings, draggableOptions);
 
+        if(self.settings.not)
+            draggableOptions.not += ','+self.settings.not;
+        
         if(!self.settings.move || self.cssPosition === 'relative')
             draggableOptions.move = false;
         
