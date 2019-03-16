@@ -134,6 +134,7 @@ function Draggable(el, options){
     var self = this,
         move = false,
         first = true,
+        wasDragged = false,
         cursor, notDraggable,
         screenCoverLayer = $('<div>', {style:"height:100%;width:100%;position:fixed;top:0;left:0"});
 
@@ -158,7 +159,7 @@ function Draggable(el, options){
         
         //Bind events
         self.el.on('mousedown touchstart', mousedown);
-        $('body').on('mouseup touchend', mouseup);
+        //$('body').on('mouseup touchend', mouseup);
         
         //if overflow is activate . (Bug: It does not work with Contaier array)
         
@@ -736,14 +737,16 @@ function Draggable(el, options){
             originalDropArea : null,
             width: self.draggableBox.width(),
             height: self.draggableBox.height(),
+            outerWidth: self.draggableBox.outerWidth(),
+            outerHeight: self.draggableBox.outerHeight(),
             x : 0, 
             y : 0
         };
         var el = self.droppable.dragElement;
         el.setCenter = function(){
             var offset = self.draggableBox.offset();
-            el.x = offset.left + el.width / 2;
-            el.y = offset.top + el.height / 2;
+            el.x = offset.left + el.outerWidth / 2;
+            el.y = offset.top + el.outerHeight / 2;
         };
         el.setCenter();
         el.originalDropArea = isOverDropArea();
@@ -866,17 +869,17 @@ function Draggable(el, options){
         var el = {
             top : offset.top,
             left : offset.left,
-            right : self.droppable.dragElement.width + offset.left,
-            bottom : self.droppable.dragElement.height + offset.top
+            right : self.droppable.dragElement.outerWidth + offset.left,
+            bottom : self.droppable.dragElement.outerHeight + offset.top
         };
         
-        if(d.outerWidth() < dropArea.innerWidth){
+        if(d.outerWidth() <= dropArea.innerWidth){
             if(el.right > dropArea.offset.innerRight)
                 css.left = parseInt(d.css('left')) + dropArea.offset.innerRight - el.right;
             if(el.left < dropArea.offset.innerLeft)
                 css.left = parseInt(d.css('left')) +  dropArea.offset.innerLeft - el.left;
         }
-        if(d.outerHeight() < dropArea.innerHeight){
+        if(d.outerHeight() <= dropArea.innerHeight){
             if(el.bottom > dropArea.offset.innerBottom)
                 css.top = parseInt(d.css('top')) + dropArea.offset.innerBottom - el.bottom;
             if(el.top < dropArea.offset.innerTop)
@@ -975,22 +978,15 @@ function Draggable(el, options){
         if(!isTouchDevice() && typeof e.which !== 'undefined' && e.which !== 1)
             return;
          
-        e.preventDefault();
-                
+        //e.preventDefault();
+               
         if(!isOverContent(e))
             return;
-        
-        
-        if(self.settings.coverScreen)
-            coverScreen(); //cover screen with layer for easily drag all over the screen
-        
-        move = true;
-        document.body.style.cursor = cursor;
 
-        //Events
-        self.settings.dragstart.call(self, e);
-        self.el.trigger('clayfy-dragstart');
+        document.body.style.cursor = cursor;
+        move = true;
         
+
         $(document).on('mousemove touchmove', mousemove)
                 .on('mouseup touchend', mouseup);
     };
@@ -1000,12 +996,16 @@ function Draggable(el, options){
         if (!move)
             return;
 
-        e.preventDefault();
-
+        document.body.style.cursor = '';
         move = false;
         first = true;
-        document.body.style.cursor = '';
         
+        if(!wasDragged)
+            return;
+        
+        wasDragged = false;
+        e.preventDefault();
+
         if (self.settings.overflow){
             self.appendTo(self.initPos.parent, self.draggableBox);
             self.appendTo(self.initPos.parent);
@@ -1027,6 +1027,48 @@ function Draggable(el, options){
                     .off('mouseup touchend', mouseup);
     };
     
+    var initDrag = function(e){
+        first = false;
+        wasDragged = true;
+            
+        if(self.settings.coverScreen)
+            coverScreen(); //cover screen with layer for easily drag all over the screen
+            
+        //Events
+        self.settings.dragstart.call(self, e);
+        self.el.trigger('clayfy-dragstart');
+
+        var p = self.el.parent();
+        self.initPos.parent = p;
+
+        if(self.settings.overflow)
+            self.appendTo(self.tempContainer, self.draggableBox);
+            
+        if(self.settings.ghost)
+            updateGhost(e);
+
+            
+        self.x = e.pageX;
+        self.y = e.pageY;
+        self.setBounderies();
+        var pos = self.getPosition(self.el);
+            
+        self.initPos = {
+            x : pos.x,
+            y : pos.y,
+            scrollLeft : p.scrollLeft(),
+            scrollTop : p.scrollTop(),
+            parent : p
+        };
+  
+        self.history = {
+            dX : [0,0,0],
+            dY : [0,0,0],
+            diffDX : 0,
+            diffDY : 0
+        };
+    };
+    
     //drag
     var mousemove = function (e) {
         if (!move)
@@ -1037,39 +1079,8 @@ function Draggable(el, options){
         if (e.originalEvent.touches && e.originalEvent.touches.length == 1)
             var e = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
 
-
         if (first) {
-            first = false;
-
-            var p = self.el.parent();
-            self.initPos.parent = p;
-
-            if(self.settings.overflow)
-                self.appendTo(self.tempContainer, self.draggableBox);
-            
-            if(self.settings.ghost)
-                updateGhost(e);
-
-            
-            self.x = e.pageX;
-            self.y = e.pageY;
-            self.setBounderies();
-            var pos = self.getPosition(self.el);
-            
-            self.initPos = {
-                x : pos.x,
-                y : pos.y,
-                scrollLeft : p.scrollLeft(),
-                scrollTop : p.scrollTop(),
-                parent : p
-            };
-  
-            self.history = {
-                dX : [0,0,0],
-                dY : [0,0,0],
-                diffDX : 0,
-                diffDY : 0
-            };
+            initDrag(e);
         }
         
         self.dX = e.pageX - self.x;
