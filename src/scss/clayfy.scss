@@ -3,6 +3,7 @@ $prefix : 'clayfy';
 .#{$prefix}-box{
     &:not(.clayfy-not-move){
         cursor : move;
+        touch-action: none;
     }
 }
 .#{$prefix}-ghost{
