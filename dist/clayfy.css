@@ -1,5 +1,7 @@
 .clayfy-box:not(.clayfy-not-move) {
-  cursor: move; }
+  cursor: move; 
+  touch-action:none;
+}
 
 .clayfy-ghost {
   z-index: 1000; }
