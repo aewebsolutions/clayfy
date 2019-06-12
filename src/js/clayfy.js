@@ -26,6 +26,9 @@ $.clayfy = {
         overflow : false, // Bool. Element will be temporaly append to an helper container outside parent
         escape : true, //cancel dragging with esc key
         propagate : true,
+        mobileDelay : 100,
+        helperOnMobile : true,
+        delay : 100,
         
         //Only resizable
         preserveAspectRatio : false,
@@ -71,6 +74,51 @@ $.clayfy = {
     }
     
 };
+
+function CallableIfNotMove() {
+    var timeoutInitMove = null;
+        
+    var initDiffPosition;
+        
+    var updateInitDiffPosition = function (e) {
+         if (e.originalEvent.touches && e.originalEvent.touches.length == 1)
+                var e = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+
+            initDiffPosition.diffX = initDiffPosition.firstX - e.pageX;
+            initDiffPosition.diffY = initDiffPosition.firstY - e.pageY;
+        }
+
+    var unsetTimeoutInitMove = function () {
+            $(document).off('mouseup touchend', unsetTimeoutInitMove);
+            if (timeoutInitMove) {
+                clearTimeout(timeoutInitMove);
+                $(document).off('mousemove touchmove', updateInitDiffPosition);
+            }
+        }
+        
+    this.callFunction = function (e, delay, func) {
+        if(!delay)
+            return func(e);
+        
+        initDiffPosition = {
+            firstX: e.pageX,
+            firstY: e.pageY,
+            diffX: 0,
+            diffY: 0,
+        }
+            
+        $(document).on('mousemove touchmove', updateInitDiffPosition);
+        $(document).on('mouseup touchend', unsetTimeoutInitMove);
+            
+        timeoutInitMove = setTimeout(function () {
+            $(document).off('mousemove touchmove', updateInitDiffPosition);
+            if (Math.abs(initDiffPosition.diffX) < 5 && Math.abs(initDiffPosition.diffY) < 5) {
+                func(e)
+            }
+
+        }, delay)
+    }
+}
 
 function Clayfy(el, options){
     this.instance;
@@ -126,16 +174,23 @@ function Draggable(el, options){
     this.tempContainer = $('<div>', {style : 'position: absolute; top:0; left:0'});
     this.droppable = {dragElement : [], dropArea : [] };
     this.status = 'ready';
-    
+    this.callableIfNotMove = new CallableIfNotMove();
    
     this.settings = $.extend(true, {}, $.clayfy.settings, options);
     
     //private properties
     var self = this,
         move = false,
-        first = true,
         wasDragged = false,
         cursor, notDraggable,
+        timeoutInitMove = null,
+        initDiffPosition = {
+            firstX : 0, 
+            firstY : 0,
+            diffX : 0, 
+            diffY:0,
+        },
+        $body = $('body'),
         screenCoverLayer = $('<div>', {style:"height:100%;width:100%;position:fixed;top:0;left:0"});
 
     //private methods
@@ -155,11 +210,11 @@ function Draggable(el, options){
         //self.droppable = (self.settings.droppable instanceof $)? self.settings.droppable : $(self.settings.droppable);
         
         if(self.settings.overflow)
-            $('body').append(self.tempContainer);
+            $body.append(self.tempContainer);
         
         //Bind events
         self.el.on('mousedown touchstart', mousedown);
-        //$('body').on('mouseup touchend', mouseup);
+        //$('body').on('mouseup touchend', mouseup); //??
         
         //if overflow is activate . (Bug: It does not work with Contaier array)
         
@@ -415,12 +470,11 @@ function Draggable(el, options){
     var isOverflowed = function(scrollable){
         var x= false,
             y = false,
-            $w = $(window),
-            $b = $('body');
+            $w = $(window);
         if(scrollable.is('body')){
-            if( $b.height() > $w.height())
+            if( $body.height() > $w.height())
                 y = true;
-            if( $b.width() > $w.width())
+            if( $body.width() > $w.width())
                 x = true;
         }else{
             if(scrollable[0].scrollHeight > scrollable.height())
@@ -470,9 +524,7 @@ function Draggable(el, options){
     function isAtRight(scrollable){
        return scrollable.el[0].scrollWidth - scrollable.el.scrollLeft() === scrollable.innerWidth;
     };
-    
-    
-    /*FALTA VER CóMO SOLUCIONAR LO DEL BODY*/
+
     var scrollableObserver = function(e){
         var d = self.contentGhost ? self.contentGhost : self.draggableBox;
         var o = self.draggableBox[0].getBoundingClientRect();
@@ -971,40 +1023,84 @@ function Draggable(el, options){
         
         return true;
     };
+    
+
 
     var mousedown = function (e) {
+
         if (notDraggable.is(e.target) || (self.el.has(e.target).length && !self.settings.propagate))
             return;
         if(!isTouchDevice() && typeof e.which !== 'undefined' && e.which !== 1)
             return;
-         
-        //e.preventDefault();
-               
+
         if(!isOverContent(e))
             return;
-
-        document.body.style.cursor = cursor;
-        move = true;
         
-
-        $(document).on('mousemove touchmove', mousemove)
-                .on('mouseup touchend', mouseup);
+        if (e.originalEvent.touches && e.originalEvent.touches.length == 1)
+            var e = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+        
+        e.preventDefault();
+        
+        //For mobile, we need a delay to avoid overwrite scroll behaivor
+        if(isTouchDevice() && self.settings.mobileDelay){
+            
+            self.callableIfNotMove.callFunction(e, self.settings.mobileDelay, function(){
+                initDrag(e);
+                $(document).on('mousemove touchmove', mousemove)
+                    .on('mouseup touchend', mouseup);
+            })
+        
+        }else{
+            self.callableIfNotMove.callFunction(e, self.settings.delay, function(){
+                initDrag(e);
+                $(document).on('mousemove touchmove', mousemove)
+                    .on('mouseup touchend', mouseup);
+            })
+        }
+        
     };
+    
+    var unsetTimeoutInitMove = function(){
+        $(document).off('mouseup touchend', unsetTimeoutInitMove);
+        if(timeoutInitMove){
+            clearTimeout(timeoutInitMove);
+            $(document).off('mousemove touchmove', updateInitDiffPosition);
+        }
+    }
+    
+    var updateInitDiffPosition = function(e){
+        if (e.originalEvent.touches && e.originalEvent.touches.length == 1)
+            var e = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+        
+        initDiffPosition.diffX = initDiffPosition.firstX - e.pageX;
+        initDiffPosition.diffY = initDiffPosition.firstY - e.pageY;
+    }
+    var resetInitDiffPosition = function(e){       
+        initDiffPosition = {
+            firstX : e.pageX, 
+            firstY : e.pageY,
+            diffX : 0, 
+            diffY:0,
+        }
+    }
     
     //drop
     var mouseup = function (e) {
-        if (!move)
-            return;
-
-        document.body.style.cursor = '';
+        // ???? ->
+        //if (!move) 
+           // return;
         move = false;
-        first = true;
         
         if(!wasDragged)
             return;
-        
         wasDragged = false;
+        
+        document.body.style.cursor = '';
         e.preventDefault();
+        
+        if(isTouchDevice() && self.settings.helperOnMobile){
+            endDragOnMobileDevice();
+        }
 
         if (self.settings.overflow){
             self.appendTo(self.initPos.parent, self.draggableBox);
@@ -1028,11 +1124,16 @@ function Draggable(el, options){
     };
     
     var initDrag = function(e){
-        first = false;
         wasDragged = true;
             
         if(self.settings.coverScreen)
             coverScreen(); //cover screen with layer for easily drag all over the screen
+        
+        if(isTouchDevice() && self.settings.helperOnMobile){
+            initDragOnMobileDevice(); 
+        }
+        
+        document.body.style.cursor = cursor;
             
         //Events
         self.settings.dragstart.call(self, e);
@@ -1069,20 +1170,24 @@ function Draggable(el, options){
         };
     };
     
+
+    var initDragOnMobileDevice = function(){
+        $body.addClass('clayfy-body-scroll-disabled')
+        $body.wrapInner('<div class="clayfy-scroll-disabled"></div>');
+    }
+    var  endDragOnMobileDevice = function(){
+        $("body > .clayfy-scroll-disabled").contents().unwrap();
+        $body.removeClass('clayfy-body-scroll-disabled')
+    }
+    
     //drag
     var mousemove = function (e) {
-        if (!move)
-            return;
-
+        move = true;
         e.preventDefault();
 
         if (e.originalEvent.touches && e.originalEvent.touches.length == 1)
             var e = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
 
-        if (first) {
-            initDrag(e);
-        }
-        
         self.dX = e.pageX - self.x;
         self.dY = e.pageY - self.y;
         $.clayfy.dX = self.dX;
@@ -1122,7 +1227,7 @@ function Draggable(el, options){
     };
     
     var coverScreen = function(){
-        $('body').append(screenCoverLayer);
+        $body.append(screenCoverLayer);
     };
     var uncoverScreen = function(){
         screenCoverLayer.detach();
@@ -1895,11 +2000,13 @@ function Sortable(el , options){
     this.index;
     this.indexRelative;
     this.parent;
+    this.callableIfNotMove = new CallableIfNotMove();
 
     this.settings = $.extend(true, {}, $.clayfy.settings, options);
     
     var self = this,
-        forceCancel;
+        forceCancel,
+        notDraggable;
     
     //private methods
     
@@ -1912,18 +2019,30 @@ function Sortable(el , options){
         //set Context
         setContext();
         
+        notDraggable = $(self.settings.not);
+        
         self.el.on('mousedown touchstart', function(e){
             if(e.type=== 'mousedown' && e.which !== 1)
                 return;
-            beforeDragstart();
-            self.draggableBox.trigger($.Event(e.type, e)); //trigger for start dragging. Pass original event when trigger
+
+            if (notDraggable.is(e.target) || notDraggable.has(e.target).length)
+                return;
+            
+            e.preventDefault();
+            
+            //Add a delay before start dragging (if it is required by settings)
+            self.callableIfNotMove.callFunction(e, self.settings.delay, function(){
+                beforeDragstart();
+                self.draggableBox.trigger($.Event(e.type, e)); //trigger for start dragging. Pass original event when trigger
+            })
         });
         
         //instance of draggable
         var draggableOptions = $.extend(true, {}, self.settings, {
             droppable : self.droppable,
             escape : false,
-            dropoutside : true
+            dropoutside : true,
+            delay : 0
         });
 
         self.draggable = new Draggable(self.draggableBox, draggableOptions);
@@ -2084,7 +2203,7 @@ function Sortable(el , options){
         
         if(self.parent.find(self.droppable).length < 2 ){
             if(!self.parent.find('.clayfy-sort-helper').length)
-                self.parent.append('<div class="clayfy-sort-helper" style="position: absolute; width: 100%; height: 100%; top: 0; left:0"></div>');
+                self.parent.append('<div class="clayfy-sort-helper" style="position: absolute; width: 100%; height: 100%; top: 0; left:0; "></div>');
             
         }else{
             self.parent.find('.clayfy-sort-helper').remove();
